@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create OUT — Websites for every business</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F2EDE3;
+  --bg-2: #E8E2D4;
+  --ink: #1A1714;
+  --ink-2: #5A554E;
+  --accent: #B84A2C;
+  --accent-2: #D97548;
+  --rule: rgba(26,23,20,0.15);
+  --paper: #FAF6EC;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Inter Tight', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection { background: var(--accent); color: var(--paper); }
+
+.mono { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; letter-spacing: 0.04em; }
+.serif { font-family: 'Fraunces', serif; }
+
+.container { max-width: 1320px; margin: 0 auto; padding: 0 32px; }
+
+/* HEADER */
+header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(242,237,227,0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--rule);
+}
+.header-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 32px; max-width: 1320px; margin: 0 auto;
+}
+.logo {
+  font-family: 'Fraunces', serif;
+  font-size: 1.4rem; font-weight: 500;
+  letter-spacing: -0.015em;
+  text-decoration: none; color: var(--ink);
+}
+.logo span { font-style: italic; color: var(--accent); font-weight: 400; }
+nav ul { display: flex; gap: 36px; list-style: none; }
+nav a {
+  color: var(--ink); text-decoration: none;
+  font-size: 0.9rem; font-weight: 500;
+  position: relative; transition: color 0.2s;
+}
+nav a:hover { color: var(--accent); }
+nav a::after {
+  content: ''; position: absolute; bottom: -4px; left: 0;
+  width: 0; height: 1px; background: var(--accent);
+  transition: width 0.3s ease;
+}
+nav a:hover::after { width: 100%; }
+.header-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem; color: var(--ink-2);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* HERO */
+.hero { padding: 140px 0 90px; position: relative; }
+.hero-grid {
+  display: grid; grid-template-columns: 1.5fr 1fr;
+  gap: 80px; align-items: end;
+}
+.hero-label {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 56px; color: var(--ink-2);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem; letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.hero-label .dot {
+  width: 6px; height: 6px; background: var(--accent);
+  border-radius: 50%; animation: pulse 2.4s infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 400;
+  font-size: clamp(2.5rem, 6.2vw, 5.4rem);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  margin-bottom: 36px;
+}
+.hero h1 em {
+  font-style: italic; font-weight: 300;
+  color: var(--accent);
+}
+
+.hero p.lead {
+  font-size: 1.1rem; line-height: 1.55;
+  color: var(--ink-2);
+  max-width: 500px; margin-bottom: 44px;
+}
+
+.hero-actions { display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: var(--ink); color: var(--paper);
+  padding: 15px 26px; text-decoration: none;
+  font-weight: 500; font-size: 0.95rem;
+  border-radius: 2px;
+  transition: background 0.2s;
+}
+.btn-primary:hover { background: var(--accent); }
+.btn-primary svg { transition: transform 0.2s; }
+.btn-primary:hover svg { transform: translateX(4px); }
+
+.btn-secondary {
+  color: var(--ink); text-decoration: none;
+  font-size: 0.95rem; font-weight: 500;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.btn-secondary:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+.hero-right { display: flex; flex-direction: column; align-items: flex-end; gap: 16px; }
+.hero-image {
+  width: 100%; aspect-ratio: 4/5;
+  background: var(--bg-2); overflow: hidden;
+}
+.hero-image img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: contrast(0.95) saturate(0.85) sepia(0.05);
+}
+.hero-caption {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem; color: var(--ink-2);
+  text-align: right; max-width: 260px; line-height: 1.5;
+}
+
+/* SECTION */
+section { padding: 110px 0; border-top: 1px solid var(--rule); }
+.section-label {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 80px; padding-bottom: 16px;
+  border-bottom: 1px solid var(--rule);
+}
+.section-label .num, .section-label .meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem; color: var(--ink-2);
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
+.section-label .name {
+  font-family: 'Fraunces', serif;
+  font-style: italic; font-size: 1.5rem; font-weight: 400;
+}
+
+/* WHAT WE BUILD */
+.build-intro {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+  font-weight: 400; line-height: 1.25;
+  letter-spacing: -0.015em;
+  max-width: 720px; margin-bottom: 72px;
+}
+.build-intro em { font-style: italic; color: var(--accent); }
+
+.build-list { display: flex; flex-direction: column; }
+.build-item {
+  display: grid;
+  grid-template-columns: 50px 1.2fr 1.8fr 30px;
+  align-items: center; gap: 32px;
+  padding: 36px 16px; margin: 0 -16px;
+  border-bottom: 1px solid var(--rule);
+  text-decoration: none; color: var(--ink);
+  transition: background 0.3s;
+}
+.build-item:first-child { border-top: 1px solid var(--rule); }
+.build-item:hover { background: rgba(184,74,44,0.045); }
+.build-item:hover .build-name { color: var(--accent); font-style: italic; }
+.build-item:hover .build-arrow { opacity: 1; transform: translateX(0); }
+
+.build-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem; color: var(--ink-2);
+}
+.build-name {
+  font-family: 'Fraunces', serif;
+  font-size: 1.7rem; font-weight: 400;
+  letter-spacing: -0.015em;
+  transition: color 0.3s, font-style 0.3s;
+}
+.build-desc { font-size: 0.95rem; color: var(--ink-2); line-height: 1.5; }
+.build-arrow {
+  opacity: 0; transform: translateX(-8px);
+  transition: opacity 0.3s, transform 0.3s;
+  color: var(--accent); font-size: 1.2rem;
+}
+
+/* OFFER */
+.offer {
+  background: var(--paper);
+  margin: 0 -32px; padding: 110px 32px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.offer-inner {
+  max-width: 1256px; margin: 0 auto;
+}
+.offer-grid {
+  display: grid; grid-template-columns: 1fr 1.4fr; gap: 100px;
+  align-items: start;
+}
+.offer-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2rem, 3.8vw, 3.1rem);
+  font-weight: 400; line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+.offer-title em { font-style: italic; color: var(--accent); }
+.offer-subtitle {
+  font-size: 1.05rem; line-height: 1.6;
+  color: var(--ink-2); margin-top: 24px;
+  max-width: 420px;
+}
+
+.offer-list { display: flex; flex-direction: column; gap: 0; }
+.offer-item {
+  display: grid; grid-template-columns: 40px 1fr;
+  gap: 24px; padding: 24px 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: start;
+}
+.offer-item:first-child { border-top: 1px solid var(--rule); }
+.offer-item .num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem; color: var(--accent);
+  padding-top: 4px;
+}
+.offer-item h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 1.25rem; font-weight: 500;
+  margin-bottom: 6px; letter-spacing: -0.01em;
+}
+.offer-item p { font-size: 0.95rem; line-height: 1.55; color: var(--ink-2); }
+
+.offer-note {
+  margin-top: 40px; padding: 24px;
+  background: var(--bg-2); border-left: 3px solid var(--accent);
+  font-size: 0.95rem; line-height: 1.6; color: var(--ink-2);
+}
+.offer-note strong { color: var(--ink); font-weight: 500; }
+
+/* PROCESS */
+.process { display: grid; grid-template-columns: 1fr 1.8fr; gap: 100px; }
+.process h2 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2rem, 3.8vw, 3.1rem);
+  font-weight: 400; line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+.process h2 em { font-style: italic; color: var(--accent); }
+.process-steps { display: flex; flex-direction: column; gap: 44px; }
+.process-step { display: grid; grid-template-columns: 110px 1fr; gap: 32px; align-items: start; }
+.process-step .step-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem; color: var(--accent);
+  padding-top: 8px; letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.process-step h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 1.4rem; font-weight: 500;
+  margin-bottom: 10px; letter-spacing: -0.01em;
+}
+.process-step p { font-size: 1rem; line-height: 1.6; color: var(--ink-2); }
+
+.process-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 32px; margin-top: 48px; padding-top: 32px;
+  border-top: 1px solid var(--rule);
+}
+.process-stat { display: flex; flex-direction: column; gap: 6px; }
+.process-stat .num {
+  font-family: 'Fraunces', serif;
+  font-size: 2.2rem; font-weight: 400; line-height: 1;
+}
+.process-stat .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem; color: var(--ink-2);
+  text-transform: uppercase; letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+
+/* ABOUT */
+.about { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: start; }
+.about-image { aspect-ratio: 5/6; background: var(--bg-2); overflow: hidden; }
+.about-image img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: contrast(0.95) saturate(0.85) sepia(0.05);
+}
+.about-text h2 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2rem, 3.8vw, 3rem);
+  font-weight: 400; line-height: 1.12;
+  margin-bottom: 32px; letter-spacing: -0.02em;
+}
+.about-text h2 em { font-style: italic; color: var(--accent); }
+.about-text p {
+  font-size: 1.05rem; line-height: 1.65;
+  color: var(--ink-2); margin-bottom: 20px;
+}
+.about-text p strong { color: var(--ink); font-weight: 500; }
+
+.about-points {
+  margin-top: 40px; padding-top: 24px;
+  border-top: 1px solid var(--rule);
+  display: flex; flex-direction: column; gap: 16px;
+}
+.about-point {
+  display: grid; grid-template-columns: 24px 1fr;
+  gap: 16px; align-items: start;
+  font-size: 0.95rem; line-height: 1.55;
+  color: var(--ink-2);
+}
+.about-point .check {
+  color: var(--accent); font-family: 'Fraunces', serif;
+  font-size: 1.1rem; line-height: 1.4;
+}
+.about-point strong { color: var(--ink); font-weight: 500; }
+
+/* CONTACT */
+.contact {
+  background: var(--ink); color: var(--paper);
+  margin: 0 -32px; padding: 130px 32px;
+}
+.contact-inner {
+  max-width: 1256px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1.1fr; gap: 100px;
+}
+.contact h2 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2.5rem, 4.8vw, 4rem);
+  font-weight: 400; line-height: 1.05;
+  letter-spacing: -0.025em; margin-bottom: 32px;
+}
+.contact h2 em { font-style: italic; color: var(--accent-2); }
+.contact-intro {
+  font-size: 1.1rem; line-height: 1.55;
+  color: rgba(250,246,236,0.7);
+  max-width: 420px; margin-bottom: 48px;
+}
+.contact-direct {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem; color: rgba(250,246,236,0.55);
+  padding-top: 24px; border-top: 1px solid rgba(250,246,236,0.15);
+  line-height: 1.7;
+}
+.contact-direct a {
+  color: var(--paper); text-decoration: none;
+  border-bottom: 1px solid var(--accent-2);
+  transition: color 0.2s;
+}
+.contact-direct a:hover { color: var(--accent-2); }
+
+.contact-form { display: flex; flex-direction: column; gap: 26px; }
+.form-row { display: flex; flex-direction: column; gap: 10px; }
+.form-row label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem; color: rgba(250,246,236,0.5);
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.form-row input, .form-row textarea, .form-row select {
+  background: transparent; border: none;
+  border-bottom: 1px solid rgba(250,246,236,0.22);
+  color: var(--paper);
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 1.05rem; padding: 10px 0;
+  outline: none; transition: border-color 0.2s;
+}
+.form-row input:focus, .form-row textarea:focus, .form-row select:focus {
+  border-bottom-color: var(--accent-2);
+}
+.form-row textarea { resize: vertical; min-height: 90px; font-family: 'Inter Tight', sans-serif; }
+.form-row select { -webkit-appearance: none; appearance: none; cursor: pointer; }
+.form-row select option { background: var(--ink); color: var(--paper); }
+.form-row input::placeholder, .form-row textarea::placeholder {
+  color: rgba(250,246,236,0.3);
+}
+
+.form-submit {
+  background: var(--accent); color: var(--paper);
+  border: none; padding: 16px 32px;
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 1rem; font-weight: 500;
+  cursor: pointer; display: inline-flex;
+  align-items: center; gap: 12px;
+  align-self: flex-start; margin-top: 12px;
+  transition: background 0.2s;
+}
+.form-submit:hover { background: var(--accent-2); }
+
+/* FOOTER */
+footer { background: var(--bg); padding: 90px 0 32px; }
+.footer-grid {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 64px; margin-bottom: 80px;
+}
+.footer-brand {
+  font-family: 'Fraunces', serif;
+  font-size: 2.6rem; font-weight: 400;
+  line-height: 1; margin-bottom: 28px;
+  letter-spacing: -0.02em;
+}
+.footer-brand span { font-style: italic; color: var(--accent); }
+.footer-address { font-size: 0.95rem; line-height: 1.7; color: var(--ink-2); }
+.footer-address a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); }
+.footer-address a:hover { border-bottom-color: var(--accent); color: var(--accent); }
+
+.footer-col h4 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem; color: var(--ink-2);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: 22px; font-weight: 500;
+}
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.footer-col a {
+  color: var(--ink); text-decoration: none;
+  font-size: 0.95rem; transition: color 0.2s;
+}
+.footer-col a:hover { color: var(--accent); font-style: italic; }
+
+.footer-bottom {
+  display: flex; justify-content: space-between;
+  padding-top: 24px; border-top: 1px solid var(--rule);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem; color: var(--ink-2);
+  letter-spacing: 0.03em;
+}
+
+/* RESPONSIVE */
+@media (max-width: 960px) {
+  .hero-grid, .offer-grid, .process, .about, .contact-inner, .footer-grid {
+    grid-template-columns: 1fr; gap: 56px;
+  }
+  .build-item {
+    grid-template-columns: 36px 1fr 30px;
+    gap: 16px; padding: 28px 12px; margin: 0 -12px;
+  }
+  .build-desc { display: none; }
+  .build-name { font-size: 1.3rem; }
+  nav ul { gap: 22px; }
+  nav a { font-size: 0.85rem; }
+  .header-meta { display: none; }
+  .footer-grid { gap: 48px; }
+  .footer-bottom { flex-direction: column; gap: 10px; }
+  .process-stats { grid-template-columns: 1fr 1fr; gap: 24px; }
+  .process-step { grid-template-columns: 1fr; gap: 8px; }
+  section { padding: 80px 0; }
+  .hero { padding: 120px 0 60px; }
+  .section-label { margin-bottom: 56px; }
+  .footer-brand { font-size: 2.2rem; }
+}
+
+@media (max-width: 560px) {
+  .container { padding: 0 20px; }
+  .header-inner { padding: 16px 20px; }
+  nav ul { gap: 16px; }
+  nav a { font-size: 0.8rem; }
+  .process-stats { grid-template-columns: 1fr; }
+  .offer-item { grid-template-columns: 1fr; gap: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .hero-label .dot { animation: none; }
+}
+
+@media (pointer: coarse) {
+  .build-item:hover { background: transparent; }
+  .build-item:hover .build-name { color: var(--ink); font-style: normal; }
+  .build-arrow { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="#" class="logo">Create<span>OUT</span></a>
+    <nav>
+      <ul>
+        <li><a href="#build">What we build</a></li>
+        <li><a href="#offer">What's included</a></li>
+        <li><a href="#process">Process</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="header-meta">Now accepting projects</div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <div class="hero-label">
+          <span class="dot"></span>
+          <span>Just launched — now taking on our first clients</span>
+        </div>
+        <h1>Websites for every business, at a price that's <em>honest</em>.</h1>
+        <p class="lead">From restaurants to clinics, shops to consultants — we design, build, and look after your website. Quarterly maintenance included free for the entire first year.</p>
+        <div class="hero-actions">
+          <a href="#contact" class="btn-primary">
+            Start a project
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8H13M13 8L8 3M13 8L8 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
+            </svg>
+          </a>
+          <a href="#build" class="btn-secondary">See what we build</a>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="hero-image">
+          <img src="Images/Image_source-2.jpg" alt="Workspace">
+        </div>
+        <div class="hero-caption">↑ No templates, no reused themes. Every site is built for one business.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="build">
+  <div class="container">
+    <div class="section-label">
+      <span class="num">01 / 04</span>
+      <span class="name">What we build</span>
+      <span class="meta">For every kind of business</span>
+    </div>
+    <p class="build-intro">We work with all types of businesses — <em>not just tech companies</em>. If you need a website that your customers can find, read, and contact you through, we can build it.</p>
+    <div class="build-list">
+      <a href="#contact" class="build-item">
+        <span class="build-num">01</span>
+        <span class="build-name">Restaurants & cafés</span>
+        <span class="build-desc">Menu pages, reservation links, location and hours, photo galleries. Updated when the menu changes.</span>
+        <span class="build-arrow">→</span>
+      </a>
+      <a href="#contact" class="build-item">
+        <span class="build-num">02</span>
+        <span class="build-name">Professional services</span>
+        <span class="build-desc">Lawyers, accountants, consultants, advisors. Clean, credible, easy to find on Google.</span>
+        <span class="build-arrow">→</span>
+      </a>
+      <a href="#contact" class="build-item">
+        <span class="build-num">03</span>
+        <span class="build-name">Shops & makers</span>
+        <span class="build-desc">Small e-commerce, product pages, simple checkout. For businesses selling online without a full dev team.</span>
+        <span class="build-arrow">→</span>
+      </a>
+      <a href="#contact" class="build-item">
+        <span class="build-num">04</span>
+        <span class="build-name">Clinics & practices</span>
+        <span class="build-desc">Service lists, booking integration, staff bios, hours, insurance info. Built for patients who are searching on their phones.</span>
+        <span class="build-arrow">→</span>
+      </a>
+      <a href="#contact" class="build-item">
+        <span class="build-num">05</span>
+        <span class="build-name">Portfolios & creatives</span>
+        <span class="build-desc">Photographers, designers, writers, artists. Your work front and center, nothing competing with it.</span>
+        <span class="build-arrow">→</span>
+      </a>
+      <a href="#contact" class="build-item">
+        <span class="build-num">06</span>
+        <span class="build-name">Local businesses</span>
+        <span class="build-desc">Salons, gyms, trades, home services. Found locally, contacted easily, booked simply.</span>
+        <span class="build-arrow">→</span>
+      </a>
+      <a href="#contact" class="build-item">
+        <span class="build-num">07</span>
+        <span class="build-name">Something else?</span>
+        <span class="build-desc">If your business doesn't fit a category, that's fine. Tell us what you do and we'll figure out the site.</span>
+        <span class="build-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="offer" id="offer">
+  <div class="container">
+    <div class="section-label" style="margin-bottom: 72px; border: none; padding: 0;">
+      <span class="num">02 / 04</span>
+      <span class="name">What's included</span>
+      <span class="meta">The full offer</span>
+    </div>
+    <div class="offer-grid">
+      <div>
+        <h2 class="offer-title">Every site comes with a year of care, <em>built in</em>.</h2>
+        <p class="offer-subtitle">We don't just build your website and disappear. For the first year, we maintain it — every three months — at no extra cost. After that, maintenance continues at a simple monthly rate if you want it.</p>
+      </div>
+      <div>
+        <div class="offer-list">
+          <div class="offer-item">
+            <span class="num">01</span>
+            <div>
+              <h3>Quarterly maintenance — 4 visits, free</h3>
+              <p>Every three months for the first year, we go through your site: update software, check security, fix anything that broke, refresh content if needed. Four visits, included in the original price.</p>
+            </div>
+          </div>
+          <div class="offer-item">
+            <span class="num">02</span>
+            <div>
+              <h3>Updates & security patches</h3>
+              <p>CMS updates, plugin updates, security patches, dependency bumps. We handle the technical side so you don't have to think about it.</p>
+            </div>
+          </div>
+          <div class="offer-item">
+            <span class="num">03</span>
+            <div>
+              <h3>Content changes</h3>
+              <p>Need to update a price, swap a photo, change your hours, add a new service? Send us the change and we'll make it. Included in your quarterly visits, and ad-hoc in between.</p>
+            </div>
+          </div>
+          <div class="offer-item">
+            <span class="num">04</span>
+            <div>
+              <h3>Backups & monitoring</h3>
+              <p>Your site is backed up regularly. We monitor uptime and get notified if something goes down. You don't have to check — we do.</p>
+            </div>
+          </div>
+          <div class="offer-item">
+            <span class="num">05</span>
+            <div>
+              <h3>One honest price</h3>
+              <p>We quote you one number based on what you need. No tiers, no packages, no surprise add-ons. The year of maintenance is part of that number, not an extra.</p>
+            </div>
+          </div>
+        </div>
+        <div class="offer-note">
+          <strong>After the first year:</strong> maintenance continues at a simple monthly rate. No lock-in, no contract — cancel anytime. Most businesses keep it on because the alternative is letting their site slowly break.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="process">
+  <div class="container">
+    <div class="section-label">
+      <span class="num">03 / 04</span>
+      <span class="name">Process</span>
+      <span class="meta">How it works</span>
+    </div>
+    <div class="process">
+      <div>
+        <h2>From first email to live site in <em>two to six weeks</em>, depending on scope.</h2>
+        <div class="process-stats">
+          <div class="process-stat">
+            <span class="num">2–6</span>
+            <span class="label">Weeks to launch</span>
+          </div>
+          <div class="process-stat">
+            <span class="num">1 year</span>
+            <span class="label">Free maintenance</span>
+          </div>
+          <div class="process-stat">
+            <span class="num">4×</span>
+            <span class="label">Quarterly visits</span>
+          </div>
+        </div>
+      </div>
+      <div class="process-steps">
+        <div class="process-step">
+          <span class="step-num">Week 1</span>
+          <div>
+            <h3>Understand</h3>
+            <p>We talk about your business, your customers, and what you need the site to do. No questionnaires — just a conversation. We come back with a plan and a price.</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <span class="step-num">Week 2 — 3</span>
+          <div>
+            <h3>Design</h3>
+            <p>We sketch the layout, choose typography and colors, and write the structure. You see work in progress and give feedback as it develops — not a big reveal at the end.</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <span class="step-num">Week 4 — 5</span>
+          <div>
+            <h3>Build</h3>
+            <p>We develop the site, add your content, and test it across devices and browsers. You watch it come together on a private staging link from day one.</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <span class="step-num">Week 6</span>
+          <div>
+            <h3>Launch & hand off</h3>
+            <p>We go live, set up your domain and email, and schedule your first quarterly maintenance visit. The site is yours — we just keep it running.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="container">
+    <div class="section-label">
+      <span class="num">04 / 04</span>
+      <span class="name">About</span>
+      <span class="meta">Est. 2025</span>
+    </div>
+    <div class="about">
+      <div class="about-image">
+        <img src="Images/Image_source-1.jpg" alt="Workspace">
+      </div>
+      <div class="about-text">
+        <h2>We just started. That's the <em>point</em>.</h2>
+        <p>Create OUT is new — and that's exactly why the pricing works the way it does. No agency overhead, no junior staff to keep busy, no markup for an office you'll never visit. You work directly with the person building your site.</p>
+        <p><strong>The price you pay reflects the actual work, not a company's rent.</strong> And the free maintenance for the first year isn't a promotion — it's how we think websites should work. A site that nobody maintains is a site that slowly breaks.</p>
+        <p>We're starting small and intend to stay that way. Fewer clients, more attention, fairer price.</p>
+        <div class="about-points">
+          <div class="about-point">
+            <span class="check">→</span>
+            <span><strong>Direct relationship.</strong> You talk to the person building your site, not a project manager.</span>
+          </div>
+          <div class="about-point">
+            <span class="check">→</span>
+            <span><strong>Affordable by structure.</strong> Low overhead means lower prices — not lower quality.</span>
+          </div>
+          <div class="about-point">
+            <span class="check">→</span>
+            <span><strong>One year of care, free.</strong> Quarterly maintenance included with every site we build.</span>
+          </div>
+          <div class="about-point">
+            <span class="check">→</span>
+            <span><strong>All business types welcome.</strong> We don't specialize in one industry. We specialize in good websites.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="contact-inner">
+    <div>
+      <h2>Start a <em>project</em>.</h2>
+      <p class="contact-intro">Tell us about your business and what you need. A paragraph is enough — we'll reply with questions and a rough price within two working days.</p>
+      <div class="contact-direct">
+        Or write to us directly:<br>
+        <a href="mailto:harsanvenkat@gmail.com">harsanvenkat@gmail.com</a>
+      </div>
+    </div>
+    <form class="contact-form" id="contactForm">
+      <div class="form-row">
+        <label for="name">Your name</label>
+        <input type="text" id="name" required>
+      </div>
+      <div class="form-row">
+        <label for="email">Email</label>
+        <input type="email" id="email" required>
+      </div>
+      <div class="form-row">
+        <label for="business">Business name & type</label>
+        <input type="text" id="business" placeholder="e.g. Raj's Diner, restaurant">
+      </div>
+      <div class="form-row">
+        <label for="budget">Budget range</label>
+        <select id="budget">
+          <option>Under ₹15,000</option>
+          <option>₹15,000 — ₹35,000</option>
+          <option>₹35,000 — ₹75,000</option>
+          <option>₹75,000+</option>
+          <option>Not sure yet</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="message">What do you need?</label>
+        <textarea id="message" rows="4" placeholder="A paragraph is enough."></textarea>
+      </div>
+      <button type="submit" class="form-submit">
+        Send
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8H13M13 8L8 3M13 8L8 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
+        </svg>
+      </button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Create<span>OUT</span></div>
+        <div class="footer-address">
+          Websites for every business.<br>
+          Affordable pricing. Free maintenance for one year.<br>
+          <a href="mailto:harsanvenkat@gmail.com">harsanvenkat@gmail.com</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>What we build</h4>
+        <ul>
+          <li><a href="#build">Restaurants & cafés</a></li>
+          <li><a href="#build">Professional services</a></li>
+          <li><a href="#build">Shops & makers</a></li>
+          <li><a href="#build">Clinics & practices</a></li>
+          <li><a href="#build">Portfolios</a></li>
+          <li><a href="#build">Local businesses</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Index</h4>
+        <ul>
+          <li><a href="#build">What we build</a></li>
+          <li><a href="#offer">What's included</a></li>
+          <li><a href="#process">Process</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Get in touch</h4>
+        <ul>
+          <li><a href="mailto:harsanvenkat@gmail.com">harsanvenkat@gmail.com</a></li>
+          <li><a href="#contact">Start a project</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Create OUT — Websites for every business</span>
+      <span>Set in Fraunces & Inter Tight.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Form handler — replace with your real endpoint
+document.getElementById('contactForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const btn = e.target.querySelector('.form-submit');
+  const original = btn.innerHTML;
+  btn.innerHTML = 'Sent — we\u2019ll reply within two working days';
+  btn.style.background = '#5A554E';
+  setTimeout(() => {
+    e.target.reset();
+    btn.innerHTML = original;
+    btn.style.background = '';
+  }, 4000);
+});
+
+// Pause the dot animation when off-screen
+const dot = document.querySelector('.hero-label .dot');
+if (dot && 'IntersectionObserver' in window) {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      dot.style.animationPlayState = e.isIntersecting ? 'running' : 'paused';
+    });
+  });
+  io.observe(dot);
+}
+</script>
+
+</body>
+</html>
