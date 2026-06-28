@@ -500,6 +500,24 @@ footer { background: var(--bg); padding: 90px 0 32px; }
   .build-item:hover .build-name { color: var(--ink); font-style: normal; }
   .build-arrow { display: none; }
 }
+.error-message{
+    color:#ff6b6b;
+    font-size:0.8rem;
+    margin-top:6px;
+    display:block;
+    min-height:18px;
+}
+
+.input-error{
+    border-bottom:2px solid #ff6b6b !important;
+}
+
+#successMessage{
+    color:#7CFC98;
+    margin-top:10px;
+    font-size:.9rem;
+    min-height:22px;
+}
 </style>
 </head>
 <body>
@@ -773,31 +791,64 @@ footer { background: var(--bg); padding: 90px 0 32px; }
     </div>
     <form class="contact-form" id="contactForm">
       <div class="form-row">
-        <label for="name">Your name</label>
-        <input type="text" id="name" required>
-      </div>
+    <label for="name">Your name</label>
+
+    <input
+        type="text"
+        id="name"
+        required
+    >
+     <small class="error-message" id="nameError"></small>
+    </div>
       <div class="form-row">
-        <label for="email">Email</label>
-        <input type="email" id="email" required>
-      </div>
+    <label for="email">Email</label>
+
+    <input
+        type="email"
+        id="email"
+        required
+    >
+
+    <small class="error-message" id="emailError"></small>
+     </div>
       <div class="form-row">
-        <label for="business">Business name & type</label>
-        <input type="text" id="business" placeholder="e.g. Raj's Diner, restaurant">
-      </div>
+    <label for="business">Business name & type</label>
+
+    <input
+        type="text"
+        id="business"
+        placeholder="e.g. Raj's Diner, restaurant"
+    >
+
+    <small class="error-message" id="businessError"></small>
+</div>
       <div class="form-row">
-        <label for="budget">Budget range</label>
-        <select id="budget">
-          <option>Under ₹15,000</option>
-          <option>₹15,000 — ₹35,000</option>
-          <option>₹35,000 — ₹75,000</option>
-          <option>₹75,000+</option>
-          <option>Not sure yet</option>
-        </select>
-      </div>
+    <label for="budget">Budget range</label>
+
+    <select id="budget">
+
+        <option>Under ₹15,000</option>
+        <option>₹15,000 — ₹35,000</option>
+        <option>₹35,000 — ₹75,000</option>
+        <option>₹75,000+</option>
+        <option>Not sure yet</option>
+
+    </select>
+
+    <small class="error-message" id="budgetError"></small>
+</div>
       <div class="form-row">
-        <label for="message">What do you need?</label>
-        <textarea id="message" rows="4" placeholder="A paragraph is enough."></textarea>
-      </div>
+    <label for="message">What do you need?</label>
+
+    <textarea
+        id="message"
+        rows="4"
+        placeholder="A paragraph is enough."
+    ></textarea>
+
+    <small class="error-message" id="messageError"></small>
+</div>
+      <div id="successMessage"></div>
       <button type="submit" class="form-submit">
         Send
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -866,6 +917,15 @@ document.getElementById('contactForm')
   btn.disabled = true;
 
   try {
+    document.querySelectorAll(".error-message").forEach(error => {
+    error.textContent = "";
+});
+
+document.querySelectorAll("input, textarea, select").forEach(field => {
+    field.classList.remove("input-error");
+});
+    document.getElementById("successMessage").textContent = "";
+
     const response = await fetch('http://localhost:3000/contact', {
       method: 'POST',
       headers: {
@@ -883,16 +943,41 @@ document.getElementById('contactForm')
     const data = await response.json();
 
 if (!response.ok || !data.success) {
-    alert(data.message);
 
-    btn.innerHTML = "Send";
+    if (data.errors) {
+
+        data.errors.forEach(error => {
+
+            const field = document.getElementById(error.path);
+
+            const errorBox = document.getElementById(`${error.path}Error`);
+
+            if (field) {
+                field.classList.add("input-error");
+            }
+
+            if (errorBox) {
+                errorBox.textContent = error.msg;
+            }
+
+        });
+
+    } else {
+
+        alert(data.message);
+
+    }
+
+    btn.innerHTML = original;
     btn.disabled = false;
 
     return;
 }
 
-    btn.innerHTML = 'Message Sent!';
-    document.getElementById('contactForm').reset();
+    document.getElementById("successMessage").textContent =
+    "✅ Message sent successfully.";
+    document.getElementById("contactForm").reset();
+    btn.innerHTML = "Message Sent!";
 
   } catch (err) {
     console.error(err);

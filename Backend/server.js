@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const { createClient } = require('@supabase/supabase-js');
+const validateContact = require("./middleware/validation");
 const ws = require('ws');
 
 const app = express();
@@ -34,7 +35,7 @@ const supabase = createClient(
   }
 );
 
-app.post('/contact', async (req, res) => {
+app.post('/contact', validateContact, async (req, res) => {
   console.log('Request received');
   console.log(req.body);
 
@@ -46,13 +47,6 @@ app.post('/contact', async (req, res) => {
       budget,
       message
     } = req.body;
-
-    if (!name || !email || !message) {
-      return res.status(400).json({
-        success: false,
-        message: 'Required fields missing.'
-      });
-    }
 
     console.log('Inserting into database...');
 
