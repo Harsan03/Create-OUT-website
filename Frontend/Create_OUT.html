@@ -854,33 +854,56 @@ footer { background: var(--bg); padding: 90px 0 32px; }
     </div>
   </div>
 </footer>
-
 <script>
-// Form handler — replace with your real endpoint
-document.getElementById('contactForm').addEventListener('submit', (e) => {
+document.getElementById('contactForm')
+.addEventListener('submit', async (e) => {
   e.preventDefault();
+
   const btn = e.target.querySelector('.form-submit');
   const original = btn.innerHTML;
-  btn.innerHTML = 'Sent — we\u2019ll reply within two working days';
-  btn.style.background = '#5A554E';
-  setTimeout(() => {
-    e.target.reset();
-    btn.innerHTML = original;
-    btn.style.background = '';
-  }, 4000);
-});
 
-// Pause the dot animation when off-screen
-const dot = document.querySelector('.hero-label .dot');
-if (dot && 'IntersectionObserver' in window) {
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      dot.style.animationPlayState = e.isIntersecting ? 'running' : 'paused';
+  btn.innerHTML = 'Sending...';
+  btn.disabled = true;
+
+  try {
+    const response = await fetch('http://localhost:3000/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        business: document.getElementById('business').value,
+        budget: document.getElementById('budget').value,
+        message: document.getElementById('message').value
+      })
     });
-  });
-  io.observe(dot);
-}
-</script>
 
+    const data = await response.json();
+
+if (!response.ok || !data.success) {
+    alert(data.message);
+
+    btn.innerHTML = "Send";
+    btn.disabled = false;
+
+    return;
+}
+
+    btn.innerHTML = 'Message Sent!';
+    document.getElementById('contactForm').reset();
+
+  } catch (err) {
+    console.error(err);
+    btn.innerHTML = 'Failed to send';
+  } finally {
+    setTimeout(() => {
+      btn.innerHTML = original;
+      btn.disabled = false;
+    }, 3000);
+  }
+});
+</script>
 </body>
 </html>
