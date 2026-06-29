@@ -22,13 +22,14 @@ const validateContact = [
         .withMessage("Business name is too long"),
 
     body("budget")
-        .isIn([
-            "Under ₹15,000",
-            "₹15k - ₹30k",
-            "₹30k - ₹50k",
-            "Above ₹50k"
-        ])
-        .withMessage("Invalid budget option"),
+    .isIn([
+        "Under ₹15,000",
+        "₹15,000 — ₹35,000",
+        "₹35,000 — ₹75,000",
+        "₹75,000+",
+        "Not sure yet"
+    ])
+    .withMessage("Invalid budget option"),
 
     body("message")
         .trim()

@@ -5,6 +5,7 @@ const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const { createClient } = require('@supabase/supabase-js');
 const validateContact = require("./middleware/validation");
+const verifyTurnstile = require("./middleware/turnstile");
 const ws = require('ws');
 
 const app = express();
@@ -34,8 +35,7 @@ const supabase = createClient(
     }
   }
 );
-
-app.post('/contact', validateContact, async (req, res) => {
+app.post('/contact', verifyTurnstile, validateContact, async (req, res) => {
   console.log('Request received');
   console.log(req.body);
 
