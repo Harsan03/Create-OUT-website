@@ -934,7 +934,7 @@ document.querySelectorAll("input, textarea, select").forEach(field => {
 });
     document.getElementById("successMessage").textContent = "";
 
-    const response = await fetch('http://localhost:3000/contact', {
+    const response = await fetch('http://127.0.0.1:3000/contact', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -1008,6 +1008,450 @@ if (!response.ok || !data.success) {
     }, 3000);
   }
 });
+
+</script>
+
+<!-- ========== CHATBOT WIDGET ========== -->
+<style>
+  .cb-bubble {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 52px;
+    height: 52px;
+    background: var(--ink);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 999;
+    transition: background 0.2s, transform 0.2s;
+    box-shadow: 0 4px 20px rgba(26,23,20,0.18);
+  }
+  .cb-bubble:hover { background: var(--accent); transform: scale(1.07); }
+  .cb-bubble svg { width: 22px; height: 22px; fill: var(--paper); }
+  .cb-bubble .cb-close-icon { display: none; }
+  .cb-bubble.open .cb-chat-icon { display: none; }
+  .cb-bubble.open .cb-close-icon { display: block; }
+
+  .cb-window {
+    position: fixed;
+    bottom: 92px;
+    right: 28px;
+    width: 340px;
+    max-height: 520px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    box-shadow: 0 8px 40px rgba(26,23,20,0.14);
+    display: flex;
+    flex-direction: column;
+    z-index: 998;
+    opacity: 0;
+    transform: translateY(16px);
+    pointer-events: none;
+    transition: opacity 0.22s, transform 0.22s;
+  }
+  .cb-window.open { opacity: 1; transform: translateY(0); pointer-events: all; }
+
+  .cb-header {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--bg-2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .cb-avatar {
+    width: 30px;
+    height: 30px;
+    background: var(--ink);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .cb-avatar svg { width: 14px; height: 14px; fill: var(--paper); }
+  .cb-header-name {
+    font-family: 'Fraunces', serif;
+    font-size: 0.95rem;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .cb-header-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--ink-2);
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+  }
+  .cb-dot { width: 5px; height: 5px; background: #4caf50; border-radius: 50%; display: inline-block; }
+
+  .cb-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    scroll-behavior: smooth;
+  }
+
+  .cb-msg {
+    max-width: 85%;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    padding: 9px 12px;
+    animation: cbFadeIn 0.18s ease;
+  }
+  @keyframes cbFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .cb-msg.bot { background: var(--bg-2); color: var(--ink); align-self: flex-start; border-radius: 0 8px 8px 8px; }
+  .cb-msg.user { background: var(--ink); color: var(--paper); align-self: flex-end; border-radius: 8px 8px 0 8px; }
+
+  .cb-typing {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 12px;
+    background: var(--bg-2);
+    align-self: flex-start;
+    border-radius: 0 8px 8px 8px;
+    animation: cbFadeIn 0.18s ease;
+  }
+  .cb-typing span {
+    width: 6px; height: 6px;
+    background: var(--ink-2);
+    border-radius: 50%;
+    animation: cbBounce 1.2s infinite;
+  }
+  .cb-typing span:nth-child(2) { animation-delay: 0.2s; }
+  .cb-typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes cbBounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+
+  .cb-options { display: flex; flex-direction: column; gap: 6px; align-self: flex-start; width: 100%; animation: cbFadeIn 0.18s ease; }
+  .cb-opt {
+    background: none;
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    font-size: 0.82rem;
+    padding: 8px 12px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .cb-opt:hover { border-color: var(--accent); color: var(--accent); background: var(--bg); }
+
+  .cb-input-area {
+    border-top: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    gap: 8px;
+    background: var(--bg);
+  }
+  .cb-input {
+    flex: 1; border: none; background: none;
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    font-size: 0.85rem; color: var(--ink); outline: none;
+  }
+  .cb-input::placeholder { color: var(--ink-2); }
+  .cb-send { background: none; border: none; cursor: pointer; padding: 4px; color: var(--ink-2); transition: color 0.15s; display: flex; align-items: center; }
+  .cb-send:hover { color: var(--accent); }
+  .cb-send svg { width: 16px; height: 16px; }
+</style>
+
+<div class="cb-bubble" id="cbBubble">
+  <svg class="cb-chat-icon" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+  <svg class="cb-close-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+</div>
+
+<div class="cb-window" id="cbWindow">
+  <div class="cb-header">
+    <div class="cb-avatar">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+    </div>
+    <div>
+      <div class="cb-header-name">Create<span style="font-style:italic;color:var(--accent)">OUT</span></div>
+      <div class="cb-header-status"><span class="cb-dot"></span> Online</div>
+    </div>
+  </div>
+  <div class="cb-messages" id="cbMessages"></div>
+  <div class="cb-input-area">
+    <input class="cb-input" id="cbInput" placeholder="Type a message..." />
+    <button class="cb-send" id="cbSend">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+(function() {
+  let step = 'start';
+  let collected = {};
+
+  const bubble  = document.getElementById('cbBubble');
+  const win     = document.getElementById('cbWindow');
+  const msgs    = document.getElementById('cbMessages');
+  const input   = document.getElementById('cbInput');
+  const sendBtn = document.getElementById('cbSend');
+
+  bubble.addEventListener('click', () => {
+    bubble.classList.toggle('open');
+    win.classList.toggle('open');
+    if (win.classList.contains('open') && msgs.children.length === 0) {
+      setTimeout(() => botFlow('start'), 400);
+    }
+  });
+
+  function sendUserMsg() {
+    const val = input.value.trim();
+    if (!val) return;
+    addMsg(val, 'user');
+    input.value = '';
+    handleUserInput(val);
+  }
+  sendBtn.addEventListener('click', sendUserMsg);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') sendUserMsg(); });
+
+  function addMsg(text, who) {
+    const el = document.createElement('div');
+    el.className = `cb-msg ${who}`;
+    el.textContent = text;
+    msgs.appendChild(el);
+    msgs.scrollTop = msgs.scrollHeight;
+    return el;
+  }
+
+  function botSay(text, delay = 600) {
+    return new Promise(resolve => {
+      const typing = document.createElement('div');
+      typing.className = 'cb-typing';
+      typing.innerHTML = '<span></span><span></span><span></span>';
+      msgs.appendChild(typing);
+      msgs.scrollTop = msgs.scrollHeight;
+      setTimeout(() => {
+        typing.remove();
+        addMsg(text, 'bot');
+        resolve();
+      }, delay);
+    });
+  }
+
+  function showOptions(options) {
+    const wrap = document.createElement('div');
+    wrap.className = 'cb-options';
+    options.forEach(({ label, value }) => {
+      const btn = document.createElement('button');
+      btn.className = 'cb-opt';
+      btn.textContent = label;
+      btn.addEventListener('click', () => {
+        wrap.remove();
+        addMsg(label, 'user');
+        handleUserInput(value || label);
+      });
+      wrap.appendChild(btn);
+    });
+    msgs.appendChild(wrap);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  async function botFlow(state) {
+    step = state;
+
+    if (state === 'start') {
+      await botSay("Hi there! 👋 Welcome to Create OUT. I'm here to help you get your business online.", 800);
+      await botSay("What would you like to know?", 600);
+      showOptions([
+        { label: "See our packages & pricing", value: "packages" },
+        { label: "Help me pick the right package", value: "recommend" },
+        { label: "How does the process work?", value: "process" },
+        { label: "I'm ready to get started", value: "enquire" },
+      ]);
+    }
+
+    else if (state === 'packages') {
+      await botSay("We have 3 packages — here's a quick breakdown:", 700);
+      await botSay("🌐 Basic — ₹5,000\nA clean frontend website with proper security. Perfect for businesses that just need an online presence.", 800);
+      await botSay("⚙️ Full Stack — ₹10,000\nA fully functional website with a backend server, database, and all the features you need — built to your requirements.", 900);
+      await botSay("✨ Custom — Price on request\nA completely bespoke website tailored to your exact vision. We'll discuss the scope and give you a quote.", 900);
+      await botSay("Would you like help picking one?", 500);
+      showOptions([
+        { label: "Help me choose", value: "recommend" },
+        { label: "I'm ready to enquire", value: "enquire" },
+        { label: "How does the process work?", value: "process" },
+      ]);
+    }
+
+    else if (state === 'recommend') {
+      await botSay("Sure! Let me ask you a couple of quick questions.", 700);
+      await botSay("Does your business need any backend features? (things like bookings, user logins, a database, payments, etc.)", 800);
+      showOptions([
+        { label: "Yes, I need backend features", value: "rec_fullstack" },
+        { label: "No, just a simple website", value: "rec_check_custom" },
+        { label: "I'm not sure", value: "rec_notsure" },
+      ]);
+    }
+
+    else if (state === 'rec_check_custom') {
+      await botSay("Do you have a very specific or unique design in mind that goes beyond a standard site?", 700);
+      showOptions([
+        { label: "Yes, it's quite unique", value: "rec_custom" },
+        { label: "No, a clean standard site is fine", value: "rec_basic" },
+      ]);
+    }
+
+    else if (state === 'rec_basic') {
+      await botSay("Great — our Basic package (₹5,000) sounds like a perfect fit! A clean, secure frontend website to get your business online.", 800);
+      await botSay("Ready to get started?", 400);
+      showOptions([
+        { label: "Yes, let's go!", value: "enquire" },
+        { label: "Tell me more about the process", value: "process" },
+      ]);
+    }
+
+    else if (state === 'rec_fullstack') {
+      await botSay("Then our Full Stack package (₹10,000) is the right choice. It covers a complete backend server, database, and all the features you need.", 900);
+      await botSay("Ready to get started?", 400);
+      showOptions([
+        { label: "Yes, let's go!", value: "enquire" },
+        { label: "Tell me more about the process", value: "process" },
+      ]);
+    }
+
+    else if (state === 'rec_custom') {
+      await botSay("Sounds like our Custom package is the best fit. We'll work closely with you to understand your vision and give you a tailored quote.", 900);
+      await botSay("Want to send us an enquiry?", 400);
+      showOptions([
+        { label: "Yes, let's talk!", value: "enquire" },
+        { label: "Tell me more about the process first", value: "process" },
+      ]);
+    }
+
+    else if (state === 'rec_notsure') {
+      await botSay("No worries! Send us an enquiry describing what you have in mind and we'll recommend the right package for you.", 800);
+      showOptions([
+        { label: "Send an enquiry", value: "enquire" },
+        { label: "Show me the packages first", value: "packages" },
+      ]);
+    }
+
+    else if (state === 'process') {
+      await botSay("Here's how it works:", 600);
+      await botSay("1️⃣ You fill out our contact form with your requirements.", 700);
+      await botSay("2️⃣ We review your enquiry and do some R&D to understand your business.", 800);
+      await botSay("3️⃣ We get back to you within 2 business days with a plan.", 800);
+      await botSay("4️⃣ Once you're happy, we start building your site.", 800);
+      await botSay("Simple and straightforward. Ready to take the first step?", 700);
+      showOptions([
+        { label: "Yes, send an enquiry", value: "enquire" },
+        { label: "See packages & pricing", value: "packages" },
+      ]);
+    }
+
+    else if (state === 'enquire') {
+      await botSay("Great! Let me take a few quick details and we'll get you sorted.", 700);
+      await botSay("What's your name?", 500);
+      step = 'collect_name';
+      input.focus();
+    }
+  }
+
+  async function handleUserInput(val) {
+    if (step === 'collect_name') {
+      collected.name = val;
+      await botSay(`Nice to meet you, ${val.split(' ')[0]}! What's your email address?`, 700);
+      step = 'collect_email';
+    }
+
+    else if (step === 'collect_email') {
+      if (!val.includes('@') || !val.includes('.')) {
+        await botSay("That doesn't look like a valid email. Could you double-check it?", 600);
+        return;
+      }
+      collected.email = val;
+      await botSay("What's your business name?", 600);
+      step = 'collect_business';
+    }
+
+    else if (step === 'collect_business') {
+      collected.business = val;
+      await botSay("Which package are you interested in?", 600);
+      step = 'collect_budget';
+      showOptions([
+        { label: "Basic — ₹5,000", value: "Under ₹15,000" },
+        { label: "Full Stack — ₹10,000", value: "Under ₹15,000" },
+        { label: "Custom — Price on request", value: "Not sure yet" },
+        { label: "Not sure yet", value: "Not sure yet" },
+      ]);
+    }
+
+    else if (step === 'collect_budget') {
+      collected.budget = val;
+      await botSay("Last one — briefly describe what you need for your website:", 600);
+      step = 'collect_message';
+      input.focus();
+    }
+
+    else if (step === 'collect_message') {
+      collected.message = val;
+      step = 'submitting';
+      await botSay("Perfect! Submitting your enquiry now...", 600);
+      await submitEnquiry();
+    }
+
+    else {
+      const lower = val.toLowerCase();
+      if (lower.includes('price') || lower.includes('cost') || lower.includes('package')) {
+        botFlow('packages');
+      } else if (lower.includes('process') || lower.includes('how') || lower.includes('work')) {
+        botFlow('process');
+      } else if (lower.includes('start') || lower.includes('enquir') || lower.includes('contact')) {
+        botFlow('enquire');
+      } else {
+        await botSay("I'm not sure about that, but I can help you with our packages, process, or getting started.", 700);
+        showOptions([
+          { label: "See packages & pricing", value: "packages" },
+          { label: "How does the process work?", value: "process" },
+          { label: "Get started", value: "enquire" },
+        ]);
+      }
+    }
+  }
+
+  async function submitEnquiry() {
+    try {
+      const response = await fetch('http://127.0.0.1:3000/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: collected.name,
+          email: collected.email,
+          business: collected.business,
+          budget: collected.budget,
+          message: collected.message,
+          turnstileToken: '1x00000000000000000000AA'
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        await botSay(`✅ Done! We've received your enquiry, ${collected.name.split(' ')[0]}. Check your inbox — we've sent you a confirmation email.`, 700);
+        await botSay("We'll get back to you within 2 business days. Talk soon! 👋", 800);
+      } else {
+        await botSay("Hmm, something went wrong. Could you try our contact form directly?", 700);
+      }
+    } catch (err) {
+      await botSay("Couldn't reach our server right now. Please use the contact form on this page instead.", 700);
+    }
+  }
+})();
 </script>
 </body>
 </html>

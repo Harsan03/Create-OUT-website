@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Create OUT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Inter+Tight:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #F2EDE3;
+      --bg-2: #E8E2D4;
+      --ink: #1A1714;
+      --ink-2: #5A554E;
+      --accent: #B84A2C;
+      --accent-2: #D97548;
+      --rule: rgba(26,23,20,0.15);
+      --paper: #FAF6EC;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter Tight', system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
+    header {
+      background: rgba(242,237,227,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--rule);
+      padding: 0 40px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand { font-family: 'Fraunces', serif; font-size: 1.2rem; }
+    .brand span { font-style: italic; color: var(--accent); font-weight: 400; }
+    .brand-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--ink-2);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-left: 10px;
+    }
+
+    .header-right { display: flex; align-items: center; gap: 20px; }
+
+    .btn-logout {
+      background: none;
+      border: 1px solid var(--rule);
+      color: var(--ink);
+      font-family: 'Inter Tight', system-ui, sans-serif;
+      font-size: 0.82rem;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-logout:hover { border-color: var(--accent); color: var(--accent); }
+
+    main { padding: 40px; max-width: 1100px; margin: 0 auto; }
+
+    .page-title { font-family: 'Fraunces', serif; font-size: 2rem; margin-bottom: 6px; }
+
+    .page-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--ink-2);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    .table-wrap { background: var(--paper); border: 1px solid var(--rule); overflow-x: auto; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+
+    thead { border-bottom: 1px solid var(--rule); background: var(--bg-2); }
+
+    th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-2);
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 400;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--rule);
+      color: var(--ink);
+      vertical-align: top;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--bg-2); cursor: pointer; }
+
+    .badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      background: var(--bg-2);
+      border: 1px solid var(--rule);
+      padding: 2px 8px;
+      color: var(--ink-2);
+    }
+
+    .empty-state, .loading-state {
+      padding: 60px;
+      text-align: center;
+      color: var(--ink-2);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(26,23,20,0.5);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 36px;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--ink-2);
+      transition: color 0.2s;
+    }
+    .modal-close:hover { color: var(--accent); }
+
+    .modal-name { font-family: 'Fraunces', serif; font-size: 1.4rem; margin-bottom: 4px; }
+    .modal-email { font-size: 0.82rem; color: var(--accent); margin-bottom: 24px; }
+
+    .detail-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .detail-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+    .detail-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-2);
+    }
+
+    .detail-value { font-size: 0.92rem; color: var(--ink); line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <header>
+    <div style="display:flex; align-items:center;">
+      <div class="brand">Create<span>OUT</span></div>
+      <span class="brand-label">/ Admin</span>
+    </div>
+    <div class="header-right">
+      <button class="btn-logout" id="logoutBtn">Log out</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-title">Enquiries</div>
+    <div class="page-sub" id="enquiryCount">Loading...</div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Business</th>
+            <th>Budget</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="enquiriesBody">
+          <tr><td colspan="6" class="loading-state">Fetching enquiries...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div class="modal-name" id="modalName"></div>
+      <div class="modal-email" id="modalEmail"></div>
+      <div class="detail-row">
+        <span class="detail-label">Business</span>
+        <span class="detail-value" id="modalBusiness"></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Budget</span>
+        <span class="detail-value" id="modalBudget"></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Message</span>
+        <span class="detail-value" id="modalMessage"></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Submitted</span>
+        <span class="detail-value" id="modalDate"></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const enquiriesBody = document.getElementById('enquiriesBody');
+    const enquiryCount = document.getElementById('enquiryCount');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalClose = document.getElementById('modalClose');
+
+    const formatDate = (iso) => {
+      const d = new Date(iso);
+      return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    };
+
+    const loadEnquiries = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:3000/admin/enquiries', {
+          credentials: 'include'
+        });
+
+        if (response.status === 401) {
+          window.location.href = 'admin-login.html';
+          return;
+        }
+
+        const data = await response.json();
+
+        if (!data.success || !data.data.length) {
+          enquiriesBody.innerHTML = `<tr><td colspan="6" class="empty-state">No enquiries yet.</td></tr>`;
+          enquiryCount.textContent = '0 enquiries';
+          return;
+        }
+
+        enquiryCount.textContent = `${data.data.length} enquir${data.data.length === 1 ? 'y' : 'ies'} received`;
+
+        enquiriesBody.innerHTML = data.data.map((e, i) => `
+          <tr onclick="openModal(${JSON.stringify(e).replace(/"/g, '&quot;')})">
+            <td><span class="badge">${String(i + 1).padStart(2, '0')}</span></td>
+            <td>${e.name}</td>
+            <td>${e.email}</td>
+            <td>${e.business}</td>
+            <td>${e.budget}</td>
+            <td>${formatDate(e.created_at)}</td>
+          </tr>
+        `).join('');
+
+      } catch (err) {
+        enquiriesBody.innerHTML = `<tr><td colspan="6" class="empty-state">Failed to load enquiries.</td></tr>`;
+      }
+    };
+
+    const openModal = (enquiry) => {
+      document.getElementById('modalName').textContent = enquiry.name;
+      document.getElementById('modalEmail').textContent = enquiry.email;
+      document.getElementById('modalBusiness').textContent = enquiry.business;
+      document.getElementById('modalBudget').textContent = enquiry.budget;
+      document.getElementById('modalMessage').textContent = enquiry.message;
+      document.getElementById('modalDate').textContent = formatDate(enquiry.created_at);
+      modalOverlay.classList.add('open');
+    };
+
+    modalClose.addEventListener('click', () => modalOverlay.classList.remove('open'));
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) modalOverlay.classList.remove('open');
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await fetch('http://127.0.0.1:3000/admin/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      window.location.href = 'admin-login.html';
+    });
+
+    loadEnquiries();
+  </script>
+</body>
+</html>

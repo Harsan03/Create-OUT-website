@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login — Create OUT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Inter+Tight:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #F2EDE3;
+      --bg-2: #E8E2D4;
+      --ink: #1A1714;
+      --ink-2: #5A554E;
+      --accent: #B84A2C;
+      --accent-2: #D97548;
+      --rule: rgba(26,23,20,0.15);
+      --paper: #FAF6EC;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter Tight', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-card {
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .brand {
+      font-family: 'Fraunces', serif;
+      font-size: 1.4rem;
+      margin-bottom: 4px;
+    }
+
+    .brand span { font-style: italic; color: var(--accent); font-weight: 400; }
+
+    .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--ink-2);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+
+    .field label {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .field input {
+      background: var(--bg);
+      border: 1px solid var(--rule);
+      color: var(--ink);
+      font-family: 'Inter Tight', system-ui, sans-serif;
+      font-size: 0.95rem;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+
+    .field input:focus { border-color: var(--ink); }
+    .field input.input-error { border-color: var(--accent); }
+
+    .btn-login {
+      width: 100%;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      font-family: 'Inter Tight', system-ui, sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 8px;
+    }
+
+    .btn-login:hover { background: var(--accent); }
+    .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .general-error {
+      font-size: 0.82rem;
+      color: var(--accent);
+      margin-top: 12px;
+      text-align: center;
+      min-height: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="brand">Create<span>OUT</span></div>
+    <div class="label">Admin Access</div>
+
+    <div class="field">
+      <label for="username">Username</label>
+      <input type="text" id="username" placeholder="Enter username" autocomplete="username" />
+    </div>
+
+    <div class="field">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter password" autocomplete="current-password" />
+    </div>
+
+    <div class="general-error" id="generalError"></div>
+
+    <button class="btn-login" id="loginBtn">Log in</button>
+  </div>
+
+  <script>
+    const loginBtn = document.getElementById('loginBtn');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const generalError = document.getElementById('generalError');
+
+    loginBtn.addEventListener('click', async () => {
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+
+      generalError.textContent = '';
+
+      if (!username || !password) {
+        generalError.textContent = 'Please enter both username and password.';
+        return;
+      }
+
+      loginBtn.textContent = 'Logging in...';
+      loginBtn.disabled = true;
+
+      try {
+        const response = await fetch('http://127.0.0.1:3000/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          window.location.href = 'admin-dashboard.html';
+        } else {
+          generalError.textContent = data.message || 'Login failed.';
+          loginBtn.textContent = 'Log in';
+          loginBtn.disabled = false;
+        }
+
+      } catch (err) {
+        generalError.textContent = 'Could not connect to server.';
+        loginBtn.textContent = 'Log in';
+        loginBtn.disabled = false;
+      }
+    });
+
+    [usernameInput, passwordInput].forEach(input => {
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') loginBtn.click();
+      });
+    });
+  </script>
+</body>
+</html>
