@@ -13,9 +13,12 @@ const { sendConfirmationEmail, sendAdminNotification } = require('./utils/mailer
 const app = express();
 
 app.use(cors({
-  origin: 'http://127.0.0.1:5500',
-  credentials: true
+  origin: process.env.FRONTEND_URL,
+  credentials: true,
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
 app.use(express.json());
 app.use(cookieParser());
 app.use('/admin', adminRoutes);

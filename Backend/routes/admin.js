@@ -47,10 +47,11 @@ router.post('/login', async (req, res) => {
     );
 
     res.cookie('adminToken', token, {
-      httpOnly: true,
-      sameSite: 'lax',
-      maxAge: 8 * 60 * 60 * 1000
-    });
+  httpOnly: true,
+  sameSite: 'none',
+  secure: true,
+  maxAge: 8 * 60 * 60 * 1000
+  });
 
     res.json({ success: true, message: 'Logged in successfully.' });
 
