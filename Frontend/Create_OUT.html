@@ -934,7 +934,7 @@ document.querySelectorAll("input, textarea, select").forEach(field => {
 });
     document.getElementById("successMessage").textContent = "";
 
-    const response = await fetch('http://127.0.0.1:3000/contact', {
+    const response = await fetch('https://create-out-backend.onrender.com/contact', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -1426,7 +1426,7 @@ if (!response.ok || !data.success) {
 
   async function submitEnquiry() {
     try {
-      const response = await fetch('http://127.0.0.1:3000/contact', {
+      const response = await fetch('https://create-out-backend.onrender.com/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
